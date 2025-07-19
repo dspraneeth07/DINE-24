@@ -81,30 +81,6 @@ const Header = () => {
               Admin Login
             </Button>
 
-            {/* Contact/Admin Dashboard Button */}
-            {!isAdminLoggedIn ? (
-              <Link to="/contact">
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="hover:bg-royal-gold/10 hidden md:inline-flex border border-royal-gold/20"
-                  title="Contact Us"
-                >
-                  <Phone className="h-5 w-5 text-royal-gold" />
-                </Button>
-              </Link>
-            ) : (
-              <Link to="/admin/dashboard">
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="hover:bg-royal-gold/10 hidden md:inline-flex border border-royal-gold/20"
-                  title="Admin Dashboard"
-                >
-                  <Settings className="h-5 w-5 text-royal-gold" />
-                </Button>
-              </Link>
-            )}
 
             {/* Mobile Menu Button */}
             <Button
