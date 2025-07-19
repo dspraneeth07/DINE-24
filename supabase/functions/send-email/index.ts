@@ -1,8 +1,5 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -41,42 +38,48 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Invalid email address');
     }
 
-    // Validate API key
-    if (!Deno.env.get("RESEND_API_KEY")) {
-      throw new Error('RESEND_API_KEY not configured');
-    }
+    // Convert HTML content to plain text for RapidAPI (they don't support HTML in basic plan)
+    const plainTextBody = html
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/\s+/g, ' ')
+      .trim();
 
-    const emailOptions: any = {
-      from: "DINE24 Restaurant <onboarding@resend.dev>",
-      to: [to],
-      subject: subject,
-      html: html,
-    };
+    console.log("Sending email via RapidAPI...");
 
-    // Add PDF attachment if provided
-    if (pdfAttachment && pdfAttachment.content) {
-      console.log("Adding PDF attachment:", pdfAttachment.filename);
-      emailOptions.attachments = [{
-        filename: pdfAttachment.filename,
-        content: pdfAttachment.content,
-      }];
-    }
+    // Use RapidAPI mail service
+    const emailResponse = await fetch('https://rapidmail.p.rapidapi.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-rapidapi-host': 'rapidmail.p.rapidapi.com',
+        'x-rapidapi-key': '326e070dfcmsh6923b1e0a96a942p1c4e42jsnd2c4d585bbd8'
+      },
+      body: JSON.stringify({
+        ishtml: "false",
+        sendto: to,
+        name: "DINE24 Restaurant",
+        replyTo: "info@dine24.com",
+        title: subject,
+        body: plainTextBody + "\n\n--- \nThis email was sent from DINE24 Restaurant Management System"
+      })
+    });
 
-    console.log("Sending email via Resend...");
-    const emailResponse = await resend.emails.send(emailOptions);
-    
-    console.log("Resend response:", emailResponse);
+    const responseData = await emailResponse.text();
+    console.log("RapidAPI response:", responseData);
 
-    if (emailResponse.error) {
-      console.error("Resend API error:", emailResponse.error);
-      throw new Error(`Email sending failed: ${emailResponse.error.message}`);
+    if (!emailResponse.ok) {
+      throw new Error(`RapidAPI error: ${emailResponse.status} - ${responseData}`);
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: "Email sent successfully",
-        id: emailResponse.data?.id
+        message: "Email sent successfully via RapidAPI",
+        response: responseData
       }),
       {
         status: 200,

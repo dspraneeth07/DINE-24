@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Sun, Moon, User, Settings } from "lucide-react";
+import { Menu, X, Sun, Moon, Phone, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 import { useState } from "react";
@@ -67,16 +67,16 @@ const Header = () => {
               Reserve Table
             </Button>
 
-            {/* Admin Login/Dashboard - Icon Only */}
+            {/* Contact/Admin Button - Changed to contact icon */}
             {!isAdminLoggedIn ? (
-              <Link to="/login">
+              <Link to="/contact">
                 <Button 
                   variant="ghost" 
                   size="icon"
                   className="hover:bg-royal-gold/10 hidden md:inline-flex"
-                  title="Admin Login"
+                  title="Contact Us"
                 >
-                  <User className="h-5 w-5" />
+                  <Phone className="h-5 w-5" />
                 </Button>
               </Link>
             ) : (
@@ -150,10 +150,10 @@ const Header = () => {
                 Reserve Table
               </Button>
               {!isAdminLoggedIn ? (
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="outline" className="w-full">
-                    <User className="h-4 w-4 mr-2" />
-                    Admin Login
+                    <Phone className="h-4 w-4 mr-2" />
+                    Contact Us
                   </Button>
                 </Link>
               ) : (

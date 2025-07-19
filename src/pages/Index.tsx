@@ -43,35 +43,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Updated without crown icon */}
-      <section className="relative bg-royal-gradient py-32 px-4 overflow-hidden">
-        <div className="container mx-auto text-center relative z-10">
-          <h1 className="font-playfair text-6xl md:text-8xl font-bold text-black mb-6 tracking-wider">
+      {/* Hero Section - Reverted to older simple version */}
+      <section className="relative bg-gradient-to-b from-background to-muted py-20 px-4">
+        <div className="container mx-auto text-center">
+          <h1 className="font-playfair text-6xl md:text-7xl font-bold text-royal-gold mb-6">
             DINE24
           </h1>
-          <p className="font-playfair text-2xl md:text-3xl text-black/80 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Experience Royal Dining Excellence Every Hour of the Day
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Experience Royal Dining Excellence Around the Clock
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/reserve-table">
-              <Button size="lg" className="bg-black text-royal-gold hover:bg-black/90 text-xl px-8 py-4">
+              <Button size="lg" className="btn-royal">
                 Reserve Your Table
               </Button>
             </Link>
             <Link to="/menu">
-              <Button size="lg" variant="outline" className="border-black text-black hover:bg-black hover:text-royal-gold text-xl px-8 py-4">
+              <Button size="lg" variant="outline">
                 Explore Menu
               </Button>
             </Link>
           </div>
-        </div>
-        
-        {/* Floating elements */}
-        <div className="absolute top-20 left-10 animate-bounce">
-          <Utensils className="h-12 w-12 text-black/20" />
-        </div>
-        <div className="absolute bottom-20 right-10 animate-pulse">
-          <ChefHat className="h-16 w-16 text-black/20" />
         </div>
       </section>
 
