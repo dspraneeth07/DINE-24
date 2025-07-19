@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import ReservationForm from "@/components/ReservationForm";
 import TableSelection from "@/components/TableSelection";
@@ -84,9 +83,9 @@ const ReserveTable = () => {
     await completeReservation([]);
   };
 
-  const handleOrderComplete = async (items: OrderItem[], orderType: 'now' | 'later') => {
+  const handleOrderComplete = async (items: OrderItem[], total: number) => {
     setOrderItems(items);
-    await completeReservation(items, orderType);
+    await completeReservation(items, 'now');
   };
 
   const completeReservation = async (items: OrderItem[], orderType: 'now' | 'later' = 'later') => {
@@ -420,8 +419,8 @@ const ReserveTable = () => {
 
               <OrderSelection
                 reservationData={reservationData}
+                selectedTable={selectedTable}
                 onOrderComplete={handleOrderComplete}
-                onAISuggestion={handleAISuggestion}
               />
             </div>
           )}

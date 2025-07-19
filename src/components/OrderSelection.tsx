@@ -82,6 +82,15 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
 
   const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  const handleCheckout = () => {
+    // Convert the selected items to match the expected format and call onOrderComplete
+    const itemsWithSelectedQuantity = selectedItems.map(item => ({
+      ...item,
+      selectedQuantity: item.quantity
+    }));
+    onOrderComplete(itemsWithSelectedQuantity, totalAmount);
+  };
+
   const handleAIFoodRecommendation = async () => {
     if (!dietaryPreference || !cuisine) {
       setAiSuggestion("Please select your dietary preference and cuisine type first.");
@@ -320,7 +329,7 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
         totalAmount={totalAmount}
-        onCheckout={() => setShowBillPreview(true)}
+        onCheckout={handleCheckout}
       />
 
       {/* Bill Preview Modal */}
