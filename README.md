@@ -1,242 +1,301 @@
+# DINE24 Restaurant Management System - Backend
 
-# DINE24 - Premium Restaurant Management System
+**Developer:** MAMIDALA BHAVYA REDDY
 
-## 🍽️ Project Overview
-
-DINE24 is a comprehensive restaurant management system that provides a royal dining experience with 24/7 service capabilities. This full-stack application combines elegant frontend design with robust backend functionality to deliver seamless restaurant operations.
-
-**Developer:** Bhavya Reddy Mamidala
-
-## ✨ Key Features
-
-### Customer Experience
-- **Table Reservation System** - Advanced booking with real-time availability
-- **Interactive Menu Browsing** - Dynamic menu with categorization and search
-- **Order Management** - Pre-order capabilities with cart functionality
-- **Today's Specials** - Featured dishes with special pricing
-- **Bill Generation** - Automated PDF receipts with elegant formatting
-- **Payment Integration** - Secure payment processing system
-- **Responsive Design** - Optimized for all devices and screen sizes
-
-### Administrative Features
-- **Admin Dashboard** - Comprehensive restaurant management interface
-- **Menu Management** - CRUD operations for menu items and categories
-- **Reservation Tracking** - Real-time booking management and status updates
-- **User Management** - Customer database and profile management
-- **Special Offers** - Dynamic pricing and promotional campaign management
-- **Analytics & Reporting** - Business insights and performance metrics
-
-### Technical Highlights
-- **Real-time Updates** - Live data synchronization across all components
-- **Email Notifications** - Automated confirmation and reminder systems
-- **PDF Generation** - Professional bill and receipt creation
-- **AI Integration** - Smart customer support chatbot
-- **Theme Support** - Light/dark mode with elegant royal color scheme
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **React 18** - Modern component-based architecture
-- **TypeScript** - Type-safe development environment
-- **Vite** - Fast build tool and development server
-- **Tailwind CSS** - Utility-first styling framework
-- **Shadcn/UI** - Premium component library
-- **React Router** - Client-side routing solution
-- **React Query** - Server state management
-- **Lucide React** - Beautiful icon library
-
-### Backend & Database
-- **Supabase** - Backend-as-a-Service platform
-- **PostgreSQL** - Robust relational database
-- **Row Level Security** - Advanced data security
-- **Real-time Subscriptions** - Live data updates
-- **Edge Functions** - Serverless computing
-- **Authentication** - Secure user management
-
-### External Integrations
-- **Email Service** - Automated email notifications
-- **Payment Gateway** - Secure transaction processing
-- **PDF Generation** - Professional document creation
-- **AI Chat Service** - Intelligent customer support
-
-## 🏗️ System Architecture
+## 🏗️ System Architecture & Flow
 
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│                           DINE24 SYSTEM FLOW                        │
+└─────────────────────────────────────────────────────────────────────┘
+
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Supabase      │    │   External      │
-│   (React)       │    │   Backend       │    │   Services      │
-├─────────────────┤    ├─────────────────┤    ├─────────────────┤
-│ • User Interface│────│ • PostgreSQL    │────│ • Email API     │
-│ • State Mgmt    │    │ • Authentication│    │ • Payment API   │
-│ • Routing       │    │ • Edge Functions│    │ • AI Chat API   │
-│ • Styling       │    │ • Real-time DB  │    │ • PDF Service   │
+│   FRONTEND      │    │    BACKEND      │    │    DATABASE     │
+│   (React.js)    │────│   (Flask API)   │────│   (MongoDB)     │
+│                 │    │                 │    │                 │
+│ • User Interface│    │ • REST API      │    │ • Collections:  │
+│ • Reservations  │    │ • Authentication│    │   - reservations│
+│ • Menu Display  │    │ • Business Logic│    │   - menu_items  │
+│ • AI Chat       │    │ • AI Integration│    │   - users       │
+│ • Admin Panel   │    │ • Email Service │    │   - chat_logs   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   EXTERNAL      │    │   AI SERVICES   │    │   EMAIL SERVICE │
+│   SERVICES      │    │                 │    │                 │
+│                 │    │ • OpenAI GPT    │    │ • Flask-Mail    │
+│ • Payment Gateway│    │ • Recommendations│   │ • SMTP Config   │
+│ • SMS Service   │    │ • Chat Support  │    │ • Confirmations │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## 📊 Database Schema
+## 🚀 Features Overview
 
-### Core Tables
-- **menu_items** - Restaurant menu with pricing and categories
-- **tables** - Table management with capacity and availability
-- **reservations** - Booking system with customer details
-- **todays_specials** - Featured dishes and promotional offers
-- **users** - Customer profiles and preferences
-- **orders** - Order tracking and history
+### 🍽️ Core Restaurant Features
+- **Table Reservation System**: Complete booking and management
+- **Dynamic Menu Management**: CRUD operations for restaurant menu
+- **Real-time Analytics**: Business insights and reporting
+- **Order Processing**: Handle customer orders and payments
 
-### Security & Performance
-- Row Level Security (RLS) policies for data protection
-- Optimized indexes for fast query performance
-- Real-time triggers for live updates
-- Automated backup and recovery systems
+### 🤖 AI-Powered Features
+- **Intelligent Chatbot**: Customer support and food recommendations
+- **Smart Recommendations**: AI-driven menu suggestions
+- **Automated Responses**: 24/7 customer assistance
 
-## 🚀 Getting Started
+### 👨‍💼 Admin Features
+- **Dashboard Analytics**: Comprehensive business overview
+- **User Management**: Customer and staff administration
+- **Menu Control**: Add, edit, delete menu items
+- **Reservation Management**: View and manage all bookings
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose | Why We Use It |
+|------------|---------|---------------|
+| ![Flask](https://img.shields.io/badge/Flask-000000?style=flat&logo=flask&logoColor=white) | **Web Framework** | Lightweight, flexible Python framework for rapid API development |
+| ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white) | **Database** | NoSQL database for flexible document storage and scalability |
+| ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat&logo=openai&logoColor=white) | **AI Services** | GPT integration for intelligent chatbot and recommendations |
+| ![JWT](https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white) | **Authentication** | Secure token-based authentication system |
+| ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white) | **Caching** | In-memory caching for improved performance |
+| ![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=flat&logo=gunicorn&logoColor=white) | **WSGI Server** | Production-ready Python WSGI HTTP Server |
+
+## 📋 API Endpoints Reference
+
+### 🔐 Authentication
+```
+POST /api/auth/login        - Admin login
+POST /api/auth/logout       - Admin logout
+GET  /api/auth/verify       - Verify JWT token
+```
+
+### 🍽️ Reservations
+```
+POST /api/reservations      - Create new reservation
+GET  /api/reservations      - Get all reservations (Admin)
+PUT  /api/reservations/{id} - Update reservation status
+DELETE /api/reservations/{id} - Cancel reservation
+```
+
+### 📖 Menu Management
+```
+GET    /api/menu           - Get all menu items
+POST   /api/menu           - Add new menu item (Admin)
+PUT    /api/menu/{id}      - Update menu item (Admin)
+DELETE /api/menu/{id}      - Delete menu item (Admin)
+```
+
+### 🤖 AI Services
+```
+POST /api/ai-chat          - Chat with AI assistant
+GET  /api/chat-logs        - Get chat history (Admin)
+POST /api/recommendations  - Get AI food recommendations
+```
+
+### 📊 Analytics & Reports
+```
+GET /api/analytics         - Get restaurant analytics (Admin)
+GET /api/reports/daily     - Generate daily reports (Admin)
+GET /api/reports/monthly   - Generate monthly reports (Admin)
+```
+
+## 🗄️ Database Schema
+
+### Reservations Collection
+```json
+{
+  "_id": "ObjectId",
+  "full_name": "string",
+  "email": "string", 
+  "phone": "string",
+  "num_people": "number",
+  "arrival_date": "date",
+  "arrival_time": "time",
+  "table_number": "string",
+  "status": "confirmed|pending|cancelled",
+  "total_amount": "number",
+  "purpose": "string",
+  "created_at": "datetime",
+  "updated_at": "datetime"
+}
+```
+
+### Menu Items Collection
+```json
+{
+  "_id": "ObjectId",
+  "name": "string",
+  "category": "string",
+  "price": "number",
+  "offer_price": "number",
+  "rating": "number",
+  "is_veg": "boolean",
+  "quantity": "string",
+  "orders_placed": "number",
+  "created_at": "datetime"
+}
+```
+
+### Users Collection
+```json
+{
+  "_id": "ObjectId",
+  "username": "string",
+  "password": "string (hashed)",
+  "role": "admin|customer",
+  "email": "string",
+  "created_at": "datetime"
+}
+```
+
+## 🚀 Installation & Setup
 
 ### Prerequisites
-- Node.js (version 18 or higher)
-- npm or yarn package manager
-- Git for version control
+- Python 3.8+
+- MongoDB 4.4+
+- Redis (optional, for caching)
 
-### Installation & Setup
+### Quick Start
+```bash
+# Clone repository
+git clone <repository-url>
+cd dine24-backend
 
-1. **Clone the Repository**
-   ```bash
-   git clone <repository-url>
-   cd dine24-restaurant-system
-   ```
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+# Install dependencies
+pip install -r requirements.txt
 
-3. **Environment Configuration**
-   ```bash
-   # Create .env file with required configurations
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+# Set environment variables
+export FLASK_ENV=development
+export MONGODB_URI=mongodb://localhost:27017/dine24
+export SECRET_KEY=your-secret-key
+export GEMINI_API_KEY=your-openai-key
+export MAIL_USERNAME=your-email
+export MAIL_PASSWORD=your-app-password
 
-4. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
+# Run application
+python app.py
+```
 
-5. **Access Application**
-   - Frontend: `http://localhost:5173`
-   - Admin Panel: `http://localhost:5173/admin`
+## 🔧 Configuration
 
-## 📱 Application Features
+### Environment Variables
+```bash
+FLASK_ENV=development
+SECRET_KEY=your-super-secret-key
+MONGODB_URI=mongodb://localhost:27017/dine24
+OPENAI_API_KEY=your-openai-api-key
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+REDIS_URL=redis://localhost:6379
+```
 
-### Customer Journey
-1. **Browse & Explore** - View menu, specials, and restaurant information
-2. **Make Reservation** - Select date, time, table, and party size
-3. **Pre-order Food** - Add items to cart with quantity selection
-4. **Review & Confirm** - Preview bill and complete booking
-5. **Receive Confirmation** - Get email confirmation with PDF receipt
+### Production Deployment
+```bash
+# Using Gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 app:app
 
-### Admin Workflow
-1. **Dashboard Overview** - Monitor reservations, orders, and analytics
-2. **Manage Inventory** - Update menu items, prices, and availability
-3. **Handle Reservations** - Approve, modify, or cancel bookings
-4. **Customer Service** - Access customer profiles and order history
-5. **Generate Reports** - Export business analytics and performance data
+# Using Docker
+docker build -t dine24-backend .
+docker run -p 5000:5000 dine24-backend
+```
 
-## 🎨 Design Philosophy
+## 📊 System Monitoring
 
-### Royal Theme
-- **Golden Accents** - Elegant color palette with royal gold highlights
-- **Typography** - Playfair Display and Cinzel fonts for luxury feel
-- **Animations** - Smooth transitions and hover effects
-- **Responsive Layout** - Optimized for desktop, tablet, and mobile
+### Health Check
+```bash
+GET /api/health
+```
+Response:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-20T10:30:00",
+  "version": "1.0.0",
+  "developer": "MAMIDALA BHAVYA REDDY"
+}
+```
 
-### User Experience
-- **Intuitive Navigation** - Clear menu structure and breadcrumbs
-- **Fast Loading** - Optimized assets and lazy loading
-- **Accessibility** - WCAG compliant with keyboard navigation
-- **Error Handling** - Graceful error messages and recovery options
+### Logging
+- Application logs: `logs/app.log`
+- Error logs: `logs/error.log`
+- Access logs: `logs/access.log`
 
 ## 🔒 Security Features
 
-### Data Protection
-- **Authentication** - Secure login with session management
-- **Authorization** - Role-based access control (Admin/Customer)
-- **Encryption** - All sensitive data encrypted in transit and at rest
-- **Input Validation** - Comprehensive form validation and sanitization
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: Werkzeug secure password hashing
+- **CORS Protection**: Configured for specific origins
+- **Input Validation**: Comprehensive request validation
+- **Rate Limiting**: API rate limiting (production)
 
-### Compliance
-- **GDPR Ready** - Privacy controls and data export capabilities
-- **PCI Compliance** - Secure payment processing standards
-- **Data Backup** - Automated backups with point-in-time recovery
+## 🚀 Performance Optimization
 
-## 📈 Performance Metrics
+- **Database Indexing**: Optimized MongoDB indexes
+- **Caching Strategy**: Redis caching for frequent queries
+- **Connection Pooling**: MongoDB connection pooling
+- **Async Processing**: Background task processing
 
-### Optimization Techniques
-- **Code Splitting** - Lazy loaded components for faster initial load
-- **Image Optimization** - WebP format with responsive sizing
-- **Database Indexing** - Optimized queries for sub-second response
-- **CDN Integration** - Global content delivery for faster access
+## 🧪 Testing
 
-### Monitoring
-- **Real-time Analytics** - User engagement and performance tracking
-- **Error Logging** - Comprehensive error reporting and debugging
-- **Performance Metrics** - Page load times and user experience data
+```bash
+# Run unit tests
+python -m pytest tests/
 
-## 🛡️ Testing Strategy
+# Run integration tests
+python -m pytest tests/integration/
 
-### Quality Assurance
-- **Unit Tests** - Component and utility function testing
-- **Integration Tests** - API endpoint and database testing
-- **E2E Tests** - Complete user journey validation
-- **Performance Tests** - Load testing and optimization
+# Run with coverage
+python -m pytest --cov=app tests/
+```
 
-## 🚢 Deployment
+## 📈 Scaling Considerations
 
-### Production Setup
-- **Frontend Deployment** - Static site hosting with CDN
-- **Backend Services** - Supabase cloud infrastructure
-- **Domain Configuration** - Custom domain with SSL certificate
-- **Environment Management** - Separate staging and production environments
+### Horizontal Scaling
+- Load balancer configuration
+- Multiple Flask instances
+- MongoDB replica sets
+- Redis clustering
+
+### Performance Monitoring
+- Application metrics
+- Database performance
+- Response time monitoring
+- Error rate tracking
 
 ## 🤝 Contributing
 
 ### Development Workflow
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
+2. Create feature branch (`git checkout -b feature/new-feature`)
+3. Commit changes (`git commit -am 'Add new feature'`)
+4. Push to branch (`git push origin feature/new-feature`)
+5. Create Pull Request
 
 ### Code Standards
-- **TypeScript** - Strict type checking enabled
-- **ESLint** - Code quality and consistency rules
-- **Prettier** - Automated code formatting
-- **Conventional Commits** - Standardized commit messages
+- Follow PEP 8 style guide
+- Write comprehensive tests
+- Document new features
+- Update API documentation
 
-## 📞 Support & Contact
+## 📝 License
+MIT License - see LICENSE file for details
 
-### Technical Support
-- **Documentation** - Comprehensive guides and API reference
-- **Issue Tracking** - GitHub issues for bug reports and features
-- **Community** - Discord/Slack for developer discussions
+## 👨‍💻 Developer Information
 
-### Business Inquiries
-- **Email** - contact@dine24.com
-- **Phone** - +91 98765 43210
-- **Website** - www.dine24.com
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## 🙏 Acknowledgments
-
-- **Design Inspiration** - Premium restaurant industry standards
-- **UI Components** - Shadcn/UI component library
-- **Icons** - Lucide React icon set
-- **Fonts** - Google Fonts (Playfair Display, Cinzel)
+**Name:** MAMIDALA BHAVYA REDDY  
+**Role:** Full Stack Developer  
+**Specialization:** Python Backend Development, Restaurant Management Systems  
+**Contact:** [LinkedIn](https://linkedin.com/in/mamidala-bhavya-reddy)
 
 ---
 
-**Built with ❤️ by Bhavya Reddy Mamidala**
+### 🎯 Project Goals
+This system aims to provide a comprehensive restaurant management solution with modern AI integration, ensuring efficient operations and enhanced customer experience.
 
-*DINE24 - Where Royal Dining Meets Modern Technology*
+**Version:** 1.0.0  
+**Last Updated:** January 2024  
+**Maintained by:** MAMIDALA BHAVYA REDDY
