@@ -9,6 +9,7 @@ import { Search, Plus, Minus, ShoppingCart, Sparkles, Loader2 } from "lucide-rea
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import BillPreview from "./BillPreview";
+import CheckoutPanel from "./CheckoutPanel";
 
 interface OrderSelectionProps {
   reservationData: any;
@@ -21,6 +22,7 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showBillPreview, setShowBillPreview] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [showAIRecommendations, setShowAIRecommendations] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState('');
   const [loadingAI, setLoadingAI] = useState(false);
@@ -59,15 +61,18 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
     }
   };
 
+  const updateQuantity = (itemId: number, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      removeFromCart(itemId);
+    } else {
+      setSelectedItems(items =>
+        items.map(i => i.id === itemId ? { ...i, quantity: newQuantity } : i)
+      );
+    }
+  };
+
   const removeFromCart = (itemId: number) => {
-    setSelectedItems(items => {
-      const existingItem = items.find(i => i.id === itemId);
-      if (existingItem && existingItem.quantity > 1) {
-        return items.map(i => i.id === itemId ? { ...i, quantity: i.quantity - 1 } : i);
-      } else {
-        return items.filter(i => i.id !== itemId);
-      }
-    });
+    setSelectedItems(items => items.filter(i => i.id !== itemId));
   };
 
   const totalAmount = selectedItems.reduce((sum, item) => {
@@ -292,61 +297,31 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
         </CardContent>
       </Card>
 
-      {/* Fixed Bottom Cart - 20% of screen height */}
+      {/* Floating Cart Button */}
       {selectedItems.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 h-[20vh] bg-white border-t shadow-lg z-40">
-          <div className="container mx-auto px-4 h-full flex flex-col">
-            <div className="flex items-center justify-between py-3 border-b">
-              <div className="flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5 text-royal-gold" />
-                <span className="font-semibold">Cart ({totalQuantity} items)</span>
-              </div>
-              <span className="font-bold text-royal-gold">₹{totalAmount}</span>
+        <div className="fixed bottom-6 right-6 z-40">
+          <Button
+            onClick={() => setShowCheckout(true)}
+            className="btn-royal rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-transform"
+          >
+            <div className="flex flex-col items-center">
+              <ShoppingCart className="h-6 w-6" />
+              <span className="text-xs">{totalQuantity}</span>
             </div>
-            
-            <div className="flex-1 overflow-y-auto py-2">
-              <div className="space-y-2">
-                {selectedItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">₹{item.offer_price || item.price} × {item.quantity}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => removeFromCart(item.id)}
-                        className="h-6 w-6 p-0"
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="text-sm font-medium">{item.quantity}</span>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => addToCart(item)}
-                        className="h-6 w-6 p-0"
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="py-3 space-y-2">
-              <Button
-                onClick={() => setShowBillPreview(true)}
-                className="w-full btn-royal"
-              >
-                Preview Bill & Checkout - ₹{totalAmount}
-              </Button>
-            </div>
-          </div>
+          </Button>
         </div>
       )}
+
+      {/* Checkout Panel */}
+      <CheckoutPanel
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        selectedItems={selectedItems}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeFromCart}
+        totalAmount={totalAmount}
+        onCheckout={() => setShowBillPreview(true)}
+      />
 
       {/* Bill Preview Modal */}
       {showBillPreview && (
@@ -358,9 +333,6 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
           onClose={() => setShowBillPreview(false)}
         />
       )}
-
-      {/* Add padding bottom to prevent overlap with fixed cart */}
-      {selectedItems.length > 0 && <div className="h-[20vh]" />}
     </div>
   );
 };

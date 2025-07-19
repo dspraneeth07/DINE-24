@@ -20,7 +20,7 @@ const AIChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm here to help you with food recommendations, reservations, and any questions about Dine 24. How can I assist you today?",
+      text: "Hello! I'm here to help you with food recommendations, reservations, and any questions about DINE24. How can I assist you today?",
       isUser: false,
       timestamp: new Date()
     }
@@ -50,14 +50,15 @@ const AIChat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputMessage;
     setInputMessage("");
     setIsLoading(true);
 
     try {
       const { data, error } = await supabase.functions.invoke('ai-chat', {
         body: {
-          message: inputMessage,
-          context: `User is browsing Dine 24 restaurant website`
+          message: currentMessage,
+          context: `User is browsing DINE24 restaurant website. Available pages: /menu (food menu), /about (restaurant info), /contact (contact details), /reserve-table (table booking), /todays-special (daily specials), /services (restaurant services), /admin (admin dashboard)`
         }
       });
 
@@ -73,34 +74,149 @@ const AIChat = () => {
       setMessages(prev => [...prev, aiMessage]);
 
       // Handle navigation based on user request
-      const message = inputMessage.toLowerCase();
+      const message = currentMessage.toLowerCase();
       const response = data.response?.toLowerCase() || '';
       
-      // Navigation keywords and their routes
-      const navigationMap = [
-        { keywords: ['menu', 'dishes', 'food', 'order'], route: '/menu', name: 'Menu' },
-        { keywords: ['about', 'restaurant', 'story', 'info'], route: '/about', name: 'About' },
-        { keywords: ['contact', 'phone', 'address', 'location'], route: '/contact', name: 'Contact' },
-        { keywords: ['reserve', 'book', 'table', 'reservation'], route: '/reserve-table', name: 'Reservations' },
-        { keywords: ['special', 'today', 'offer'], route: '/todays-special', name: 'Today\'s Special' },
-        { keywords: ['service', 'delivery', 'catering'], route: '/services', name: 'Services' },
-        { keywords: ['admin', 'dashboard', 'management'], route: '/admin', name: 'Admin Dashboard' }
+      // Enhanced navigation keywords and their routes
+      const navigationPatterns = [
+        {
+          keywords: ['menu', 'dishes', 'food', 'what can i eat', 'order food', 'cuisine'],
+          route: '/menu',
+          name: 'Menu',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/menu');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Menu",
+                description: "Here's our delicious food menu!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['about', 'restaurant', 'story', 'info', 'tell me about'],
+          route: '/about',
+          name: 'About',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/about');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to About",
+                description: "Learn more about DINE24!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['contact', 'phone', 'address', 'location', 'reach you', 'call'],
+          route: '/contact',
+          name: 'Contact',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/contact');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Contact",
+                description: "Here's how to reach us!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['reserve', 'book', 'table', 'reservation', 'booking'],
+          route: '/reserve-table',
+          name: 'Reservation',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/reserve-table');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Reservations",
+                description: "Let's book your table!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['special', 'today', 'offer', 'discount', 'todays special'],
+          route: '/todays-special',
+          name: "Today's Special",
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/todays-special');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Today's Special",
+                description: "Check out today's amazing offers!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['service', 'services', 'delivery', 'catering', 'what do you offer'],
+          route: '/services',
+          name: 'Services',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/services');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Services",
+                description: "Discover our premium services!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['admin', 'dashboard', 'management', 'login'],
+          route: '/admin',
+          name: 'Admin Dashboard',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/admin');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Admin",
+                description: "Admin panel loaded!",
+              });
+            }, 1000);
+          }
+        },
+        {
+          keywords: ['home', 'homepage', 'main page', 'start'],
+          route: '/',
+          name: 'Home',
+          trigger: () => {
+            setTimeout(() => {
+              navigate('/');
+              setIsOpen(false);
+              toast({
+                title: "Navigated to Home",
+                description: "Welcome back to DINE24!",
+              });
+            }, 1000);
+          }
+        }
       ];
 
-      for (const nav of navigationMap) {
-        if (nav.keywords.some(keyword => message.includes(keyword)) || 
-            nav.keywords.some(keyword => response.includes(keyword))) {
-          setTimeout(() => {
-            navigate(nav.route);
-            setIsOpen(false);
-            toast({
-              title: `Navigated to ${nav.name}`,
-              description: `Here's the ${nav.name.toLowerCase()} page you requested!`,
-            });
-          }, 1000);
+      // Check for navigation triggers
+      for (const pattern of navigationPatterns) {
+        const messageMatch = pattern.keywords.some(keyword => 
+          message.includes(keyword) || message.includes(keyword.replace(/\s+/g, ''))
+        );
+        const responseMatch = pattern.keywords.some(keyword => 
+          response.includes(keyword) || response.includes(keyword.replace(/\s+/g, ''))
+        );
+
+        if (messageMatch || responseMatch) {
+          console.log(`Navigation triggered for: ${pattern.name}`);
+          pattern.trigger();
           break;
         }
       }
+
     } catch (error) {
       console.error('Error sending message:', error);
       
@@ -139,7 +255,7 @@ const AIChat = () => {
           <CardHeader className="pb-3 flex-shrink-0">
             <CardTitle className="text-lg text-royal-gold flex items-center gap-2">
               <MessageCircle className="h-5 w-5" />
-              Dine 24 Assistant
+              DINE24 Assistant
             </CardTitle>
           </CardHeader>
           
@@ -181,7 +297,7 @@ const AIChat = () => {
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Type your message..."
+                  placeholder="Ask about menu, reservations, or anything..."
                   className="royal-border"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {

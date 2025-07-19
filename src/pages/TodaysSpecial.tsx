@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Flame, Crown, Gift, Timer } from "lucide-react";
+import { Star, Clock, Flame, Gift, Timer } from "lucide-react";
 
 const TodaysSpecial = () => {
   const todaysSpecials = [
@@ -64,11 +64,11 @@ const TodaysSpecial = () => {
 
   return (
     <div className="min-h-screen py-16">
-      {/* Hero Section */}
+      {/* Hero Section - Updated without crown icon */}
       <section className="px-4 mb-16">
         <div className="container mx-auto text-center">
-          <Crown className="h-16 w-16 text-royal-gold mx-auto mb-4 animate-glow" />
-          <h1 className="font-great-vibes text-6xl font-bold text-royal-gold mb-6">
+          <Flame className="h-16 w-16 text-royal-gold mx-auto mb-4 animate-pulse" />
+          <h1 className="font-playfair text-6xl font-bold text-royal-gold mb-6 tracking-wider">
             Today's Special
           </h1>
           <p className="font-playfair text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
@@ -127,7 +127,7 @@ const TodaysSpecial = () => {
                     <div className="space-y-4">
                       <div>
                         <h3 className="font-semibold text-royal-gold mb-2 flex items-center">
-                          <Crown className="h-5 w-5 mr-2" />
+                          <Flame className="h-5 w-5 mr-2" />
                           Why It's Special
                         </h3>
                         <p className="text-muted-foreground">{special.whySpecial}</p>

@@ -47,6 +47,14 @@ const loadJsPDF = async () => {
   });
 };
 
+// Generate a simple barcode pattern
+const generateBarcode = (text: string) => {
+  const barcodePattern = text.split('').map((char, index) => 
+    char.charCodeAt(0) % 2 === 0 ? '|' : '||'
+  ).join('');
+  return `|||${barcodePattern}|||`;
+};
+
 export const generateReservationPDF = async (reservationData: any, orderItems?: any[]) => {
   try {
     console.log('Starting PDF generation with data:', reservationData);
@@ -78,25 +86,36 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     doc.text(dateTime, 200, 15, { align: 'right' });
 
     // Logo and title
-    doc.setFontSize(24);
+    doc.setFontSize(28);
     doc.setTextColor(212, 175, 55);
-    doc.text('🍽️ DINE 24', 20, 25);
+    doc.text('DINE24', 105, 25, { align: 'center' });
     
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setTextColor(100, 100, 100);
-    doc.text('Premium Dining Experience', 20, 35);
+    doc.text('Premium Dining Experience', 105, 35, { align: 'center' });
+
+    // Generate reservation ID and barcode
+    const reservationId = reservationData.id ? reservationData.id.slice(0, 8).toUpperCase() : `RES${Date.now().toString().slice(-8)}`;
+    const barcode = generateBarcode(reservationId);
+
+    // Barcode section
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.text(barcode, 105, 45, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text(`Reservation ID: #${reservationId}`, 105, 50, { align: 'center' });
 
     // Main title
     doc.setFontSize(18);
     doc.setTextColor(0, 0, 0);
-    doc.text('RESERVATION CONFIRMATION', 105, 50, { align: 'center' });
+    doc.text('RESERVATION CONFIRMATION', 105, 60, { align: 'center' });
 
     // Decorative line
     doc.setLineWidth(1);
     doc.setDrawColor(212, 175, 55);
-    doc.line(20, 55, 190, 55);
+    doc.line(20, 65, 190, 65);
 
-    let yPos = 70;
+    let yPos = 80;
 
     // Customer Details
     doc.setFontSize(14);
@@ -107,9 +126,6 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
     
-    const reservationId = reservationData.id ? reservationData.id.slice(0, 8).toUpperCase() : 'N/A';
-    doc.text(`Reservation ID: #${reservationId}`, 20, yPos);
-    yPos += 7;
     doc.text(`Name: ${reservationData.full_name || 'N/A'}`, 20, yPos);
     yPos += 7;
     doc.text(`Email: ${reservationData.email || 'N/A'}`, 20, yPos);
@@ -196,11 +212,30 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
       doc.text(`₹${total}`, 165, yPos);
     }
 
+    // Disclaimer Section
+    yPos += 25;
+    doc.setFontSize(10);
+    doc.setTextColor(255, 0, 0); // Red color for warning
+    doc.text('⚠️ IMPORTANT DINING POLICY:', 20, yPos);
+    yPos += 8;
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    const disclaimerText = [
+      'You are allowed to have your meal within 1 hour from service start.',
+      'Extended dining beyond this limit will incur an additional 15% charge',
+      'of the total bill amount. Thank you for your understanding.'
+    ];
+    
+    disclaimerText.forEach(line => {
+      doc.text(line, 20, yPos);
+      yPos += 6;
+    });
+
     // Footer
-    yPos += 30;
+    yPos += 15;
     doc.setFontSize(12);
     doc.setTextColor(212, 175, 55);
-    doc.text('Thank you for choosing Dine 24!', 105, yPos, { align: 'center' });
+    doc.text('Thank you for choosing DINE24!', 105, yPos, { align: 'center' });
     
     yPos += 10;
     doc.setFontSize(10);

@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom";
-import { Crown, Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 import { useState } from "react";
@@ -20,11 +20,10 @@ const Header = () => {
     <header className="bg-background border-b border-royal-gold/20 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo - Updated without crown icon */}
           <Link to="/" className="flex items-center space-x-2">
-            <Crown className="h-8 w-8 text-royal-gold" />
-            <span className="font-great-vibes text-2xl font-bold text-royal-gold">
-              Dine 24
+            <span className="font-playfair text-3xl font-bold text-royal-gold tracking-wider">
+              DINE24
             </span>
           </Link>
 
