@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Minus, ShoppingCart, Receipt, CreditCard } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
+import PaymentProcessor from "./PaymentProcessor";
 
 interface CheckoutPanelProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ const CheckoutPanel = ({
 }: CheckoutPanelProps) => {
   const { theme } = useTheme();
   const [showBilling, setShowBilling] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   if (!isOpen) return null;
 
@@ -36,8 +38,25 @@ const CheckoutPanel = ({
   const gst = Math.round(subtotal * 0.18);
   const total = subtotal + gst;
 
+  const handlePaymentSuccess = () => {
+    setShowPayment(false);
+    onCheckout();
+  };
+
+  if (showPayment) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <PaymentProcessor
+          amount={total}
+          onPaymentSuccess={handlePaymentSuccess}
+          onCancel={() => setShowPayment(false)}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={`fixed right-0 top-0 h-full w-1/4 min-w-80 z-50 transform transition-transform duration-300 ${
+    <div className={`fixed right-0 top-0 h-full w-1/4 min-w-80 z-40 transform transition-transform duration-300 ${
       isOpen ? 'translate-x-0' : 'translate-x-full'
     } ${theme === 'dark' ? 'bg-gray-900 border-l border-gray-700' : 'bg-white border-l border-gray-200'} shadow-2xl`}>
       <div className="h-full flex flex-col">
@@ -148,7 +167,7 @@ const CheckoutPanel = ({
                 Preview Bill
               </Button>
               <Button
-                onClick={onCheckout}
+                onClick={() => setShowPayment(true)}
                 className="w-full"
                 variant="outline"
               >

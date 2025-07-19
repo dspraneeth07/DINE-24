@@ -83,7 +83,6 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
   const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleCheckout = () => {
-    // Convert the selected items to match the expected format and call onOrderComplete
     const itemsWithSelectedQuantity = selectedItems.map(item => ({
       ...item,
       selectedQuantity: item.quantity
@@ -113,7 +112,6 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
 
       if (error) throw error;
       
-      // Clean up AI response - remove asterisks and markdown
       let cleanResponse = data.response.replace(/\*\*/g, '').replace(/\*/g, '');
       setAiSuggestion(cleanResponse);
     } catch (error) {
@@ -125,7 +123,6 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
   };
 
   const applyAIFoodSuggestion = () => {
-    // Extract item names from AI suggestion and add to cart
     const itemNames = aiSuggestion.toLowerCase().match(/(?:^|\n)\d+\.\s*([^(]+)/g);
     
     if (itemNames) {
@@ -204,7 +201,6 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
             Get AI Food Recommendations
           </Button>
 
-          {/* AI Suggestions Display */}
           {showAIRecommendations && (
             <div className="mt-4 p-4 bg-royal-gold/10 border border-royal-gold rounded-lg">
               <h4 className="font-semibold text-royal-gold mb-2">AI Food Recommendations:</h4>
@@ -306,9 +302,9 @@ const OrderSelection = ({ reservationData, selectedTable, onOrderComplete }: Ord
         </CardContent>
       </Card>
 
-      {/* Floating Cart Button */}
+      {/* Floating Cart Button - positioned above AI chat */}
       {selectedItems.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-40">
+        <div className="fixed bottom-24 right-6 z-50">
           <Button
             onClick={() => setShowCheckout(true)}
             className="btn-royal rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-transform"

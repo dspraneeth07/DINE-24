@@ -62,31 +62,43 @@ const AdminMenu = () => {
 
   const addMenuItemMutation = useMutation({
     mutationFn: async (newItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'orders_placed'>) => {
+      console.log('Adding menu item:', newItem);
+      
       const { data, error } = await supabase
         .from('menu_items')
         .insert([{
-          ...newItem,
+          name: newItem.name,
+          category: newItem.category,
+          price: newItem.price,
+          offer_price: newItem.offer_price || null,
+          quantity: newItem.quantity,
+          rating: newItem.rating || 0,
+          is_veg: newItem.is_veg,
           orders_placed: 0
         }])
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding menu item:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
       toast({
         title: "Success",
         description: "Menu item added successfully!",
       });
       resetForm();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error adding menu item:', error);
       toast({
         title: "Error",
-        description: "Failed to add menu item. Please try again.",
+        description: `Failed to add menu item: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -94,32 +106,39 @@ const AdminMenu = () => {
 
   const updateMenuItemMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: Partial<MenuItem> }) => {
+      console.log('Updating menu item:', id, updates);
+      
       const { data, error } = await supabase
         .from('menu_items')
         .update({
           ...updates,
+          offer_price: updates.offer_price || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating menu item:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
       toast({
         title: "Success",
         description: "Menu item updated successfully!",
       });
       resetForm();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error updating menu item:', error);
       toast({
         title: "Error",
-        description: "Failed to update menu item. Please try again.",
+        description: `Failed to update menu item: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -127,25 +146,31 @@ const AdminMenu = () => {
 
   const deleteMenuItemMutation = useMutation({
     mutationFn: async (id: number) => {
+      console.log('Deleting menu item:', id);
+      
       const { error } = await supabase
         .from('menu_items')
         .delete()
         .eq('id', id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting menu item:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-menu-items'] });
+      queryClient.invalidateQueries({ queryKey: ['menu-items'] });
       toast({
         title: "Success",
         description: "Menu item deleted successfully!",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error deleting menu item:', error);
       toast({
         title: "Error",  
-        description: "Failed to delete menu item. Please try again.",
+        description: `Failed to delete menu item: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -184,27 +209,67 @@ const AdminMenu = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.category || !formData.price || !formData.quantity) {
+    // Validation
+    if (!formData.name.trim()) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields.",
+        description: "Please enter item name.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.category.trim()) {
+      toast({
+        title: "Error",
+        description: "Please select a category.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.price || formData.price <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid price.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!formData.quantity.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter quantity/serving info.",
         variant: "destructive",
       });
       return;
     }
 
+    console.log('Submitting form data:', formData);
+
     if (isEditing && selectedItem) {
       updateMenuItemMutation.mutate({
         id: selectedItem.id,
         updates: {
-          ...formData,
-          offer_price: formData.offer_price || null
+          name: formData.name.trim(),
+          category: formData.category,
+          price: formData.price,
+          offer_price: formData.offer_price > 0 ? formData.offer_price : null,
+          quantity: formData.quantity.trim(),
+          rating: formData.rating,
+          is_veg: formData.is_veg
         }
       });
     } else {
       addMenuItemMutation.mutate({
-        ...formData,
-        offer_price: formData.offer_price || null
+        name: formData.name.trim(),
+        category: formData.category,
+        price: formData.price,
+        offer_price: formData.offer_price > 0 ? formData.offer_price : null,
+        quantity: formData.quantity.trim(),
+        rating: formData.rating,
+        is_veg: formData.is_veg
       });
     }
   };
@@ -267,6 +332,11 @@ const AdminMenu = () => {
                     <SelectItem value="Main Course">Main Course</SelectItem>
                     <SelectItem value="Desserts">Desserts</SelectItem>
                     <SelectItem value="Beverages">Beverages</SelectItem>
+                    <SelectItem value="Breakfast">Breakfast</SelectItem>
+                    <SelectItem value="Snacks">Snacks</SelectItem>
+                    <SelectItem value="Pizza">Pizza</SelectItem>
+                    <SelectItem value="Specials">Specials</SelectItem>
+                    <SelectItem value="Drinks">Drinks</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -277,9 +347,9 @@ const AdminMenu = () => {
                   <Input
                     id="price"
                     type="number"
-                    value={formData.price}
+                    value={formData.price || ''}
                     onChange={(e) => setFormData({...formData, price: parseInt(e.target.value) || 0})}
-                    min="0"
+                    min="1"
                     required
                   />
                 </div>
@@ -288,7 +358,7 @@ const AdminMenu = () => {
                   <Input
                     id="offer_price"
                     type="number"
-                    value={formData.offer_price}
+                    value={formData.offer_price || ''}
                     onChange={(e) => setFormData({...formData, offer_price: parseInt(e.target.value) || 0})}
                     min="0"
                   />
@@ -311,7 +381,7 @@ const AdminMenu = () => {
                 <Input
                   id="rating"
                   type="number"
-                  value={formData.rating}
+                  value={formData.rating || ''}
                   onChange={(e) => setFormData({...formData, rating: parseFloat(e.target.value) || 0})}
                   min="0"
                   max="5"
@@ -329,7 +399,11 @@ const AdminMenu = () => {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button type="submit" className="btn-royal flex-1">
+                <Button 
+                  type="submit" 
+                  className="btn-royal flex-1"
+                  disabled={addMenuItemMutation.isPending || updateMenuItemMutation.isPending}
+                >
                   {isEditing ? 'Update Item' : 'Add Item'}
                 </Button>
                 <Button 

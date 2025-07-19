@@ -1,5 +1,5 @@
 
-// Load jsPDF with better error handling and retry mechanism
+// Enhanced PDF generator with better jsPDF loading and comprehensive bill generation
 const loadJsPDF = async () => {
   if (typeof window === 'undefined') {
     throw new Error('Window is not available');
@@ -18,23 +18,33 @@ const loadJsPDF = async () => {
     }
 
     const script = document.createElement('script');
-    script.src = 'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js';
-    script.async = true;
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    script.async = false; // Load synchronously
     document.head.appendChild(script);
     
     script.onload = () => {
       console.log('jsPDF script loaded');
-      // Wait for jsPDF to be available on window
-      let attempts = 0;
+      // Check multiple possible locations for jsPDF
       const checkJsPDF = () => {
-        attempts++;
         if (window.jsPDF) {
-          console.log('jsPDF is available');
+          console.log('jsPDF found on window.jsPDF');
           resolve();
-        } else if (attempts < 10) {
-          setTimeout(checkJsPDF, 100);
+        } else if ((window as any).jspdf?.jsPDF) {
+          console.log('jsPDF found on window.jspdf.jsPDF');
+          (window as any).jsPDF = (window as any).jspdf.jsPDF;
+          resolve();
         } else {
-          reject(new Error('jsPDF failed to initialize after multiple attempts'));
+          // Try one more time after a short delay
+          setTimeout(() => {
+            if (window.jsPDF) {
+              resolve();
+            } else if ((window as any).jspdf?.jsPDF) {
+              (window as any).jsPDF = (window as any).jspdf.jsPDF;
+              resolve();
+            } else {
+              reject(new Error('jsPDF not found after loading'));
+            }
+          }, 500);
         }
       };
       checkJsPDF();
@@ -47,7 +57,7 @@ const loadJsPDF = async () => {
   });
 };
 
-// Generate a simple barcode pattern
+// Generate a barcode pattern
 const generateBarcode = (text: string) => {
   const barcodePattern = text.split('').map((char, index) => 
     char.charCodeAt(0) % 2 === 0 ? '|' : '||'
@@ -59,17 +69,17 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
   try {
     console.log('Starting PDF generation with data:', reservationData);
     
-    // Load jsPDF with retry mechanism
+    // Load jsPDF with enhanced error handling
     await loadJsPDF();
     
     if (!window.jsPDF) {
-      throw new Error('jsPDF is not available on window object');
+      throw new Error('jsPDF is still not available after loading');
     }
 
     const { jsPDF } = window;
     const doc = new jsPDF();
 
-    // Header section
+    // Header section with current date/time
     const now = new Date();
     const dateTime = now.toLocaleString('en-IN', { 
       timeZone: 'Asia/Kolkata',
@@ -85,7 +95,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     doc.setTextColor(100, 100, 100);
     doc.text(dateTime, 200, 15, { align: 'right' });
 
-    // Logo and title
+    // Restaurant Logo and title
     doc.setFontSize(28);
     doc.setTextColor(212, 175, 55);
     doc.text('DINE24', 105, 25, { align: 'center' });
@@ -98,7 +108,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     const reservationId = reservationData.id ? reservationData.id.slice(0, 8).toUpperCase() : `RES${Date.now().toString().slice(-8)}`;
     const barcode = generateBarcode(reservationId);
 
-    // Barcode section
+    // Barcode section with enhanced styling
     doc.setFontSize(8);
     doc.setTextColor(0, 0, 0);
     doc.text(barcode, 105, 45, { align: 'center' });
@@ -117,7 +127,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
 
     let yPos = 80;
 
-    // Customer Details
+    // Customer Details Section
     doc.setFontSize(14);
     doc.setTextColor(212, 175, 55);
     doc.text('CUSTOMER DETAILS', 20, yPos);
@@ -136,7 +146,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     yPos += 7;
     doc.text(`Purpose: ${reservationData.purpose || 'N/A'}`, 20, yPos);
 
-    // Reservation Details
+    // Reservation Details Section
     yPos += 20;
     doc.setFontSize(14);
     doc.setTextColor(212, 175, 55);
@@ -156,7 +166,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     yPos += 7;
     doc.text(`Table Capacity: ${reservationData.table_capacity || 'N/A'} guests`, 20, yPos);
 
-    // Order Details
+    // Order Details Section (if items exist)
     if (orderItems && orderItems.length > 0) {
       yPos += 20;
       doc.setFontSize(14);
@@ -191,7 +201,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
         yPos += 7;
       });
 
-      // Calculations
+      // Bill calculations
       const gst = Math.round(subtotal * 0.18);
       const total = subtotal + gst;
 
@@ -212,10 +222,10 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
       doc.text(`₹${total}`, 165, yPos);
     }
 
-    // Disclaimer Section
+    // Important dining policy disclaimer
     yPos += 25;
     doc.setFontSize(10);
-    doc.setTextColor(255, 0, 0); // Red color for warning
+    doc.setTextColor(255, 0, 0);
     doc.text('⚠️ IMPORTANT DINING POLICY:', 20, yPos);
     yPos += 8;
     doc.setTextColor(0, 0, 0);
@@ -231,7 +241,7 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
       yPos += 6;
     });
 
-    // Footer
+    // Footer section
     yPos += 15;
     doc.setFontSize(12);
     doc.setTextColor(212, 175, 55);
