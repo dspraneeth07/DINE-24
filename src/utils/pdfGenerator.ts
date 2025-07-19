@@ -1,5 +1,5 @@
 
-// Enhanced PDF generator with compact layout, improved QR code, and neat structure
+// Enhanced PDF generator with Times New Roman font, proper formatting, and neat structure
 const loadJsPDF = async () => {
   if (typeof window === 'undefined') {
     throw new Error('Window is not available');
@@ -53,12 +53,12 @@ const loadJsPDF = async () => {
   });
 };
 
-// Generate compact QR Code
+// Generate elegant QR Code
 const generateQRCode = async (text: string) => {
   return new Promise<string>((resolve) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const size = 60; // Smaller QR code
+    const size = 60;
     canvas.width = size;
     canvas.height = size;
     
@@ -66,7 +66,7 @@ const generateQRCode = async (text: string) => {
       ctx.fillStyle = '#000000';
       const cellSize = size / 21;
       
-      // Generate compact QR pattern
+      // Generate QR pattern
       for (let i = 0; i < 21; i++) {
         for (let j = 0; j < 21; j++) {
           const hash = (text.charCodeAt(i % text.length) + i + j) % 3;
@@ -90,7 +90,7 @@ const generateQRCode = async (text: string) => {
 
 export const generateReservationPDF = async (reservationData: any, orderItems?: any[]) => {
   try {
-    console.log('Starting compact PDF generation');
+    console.log('Starting elegant PDF generation with Times New Roman');
     
     await loadJsPDF();
     
@@ -101,9 +101,10 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
     const { jsPDF } = window;
     const doc = new jsPDF();
 
-    doc.setFont("helvetica", "normal");
+    // Set font to Times Roman (closest to Times New Roman in jsPDF)
+    doc.setFont("times", "normal");
 
-    // Header with QR code on right side
+    // Current date/time
     const now = new Date();
     const dateTime = now.toLocaleString('en-IN', { 
       timeZone: 'Asia/Kolkata',
@@ -114,174 +115,253 @@ export const generateReservationPDF = async (reservationData: any, orderItems?: 
       minute: '2-digit'
     });
 
-    // Restaurant header
-    doc.setFontSize(24);
-    doc.setTextColor(212, 175, 55);
-    doc.setFont("helvetica", "bold");
-    doc.text('DINE24', 20, 25);
+    // Golden background header
+    doc.setFillColor(252, 240, 181); // Light golden background
+    doc.rect(0, 0, 210, 40, 'F');
+
+    // Restaurant header with elegant design
+    doc.setFontSize(28);
+    doc.setTextColor(184, 134, 11); // Dark golden color
+    doc.setFont("times", "bold");
+    doc.text('🍽️ DINE24', 105, 20, { align: 'center' });
     
-    // Date/time in top right
+    doc.setFontSize(12);
+    doc.setTextColor(146, 64, 14); // Brown color
+    doc.setFont("times", "italic");
+    doc.text('Premium Royal Dining Experience', 105, 30, { align: 'center' });
+
+    // Date/time in elegant box
     doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
-    doc.setFont("helvetica", "normal");
-    doc.text(dateTime, 190, 15, { align: 'right' });
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("times", "normal");
+    doc.text(`Generated: ${dateTime}`, 180, 45, { align: 'right' });
 
     // Generate reservation ID and QR code
     const reservationId = reservationData.id ? 
       reservationData.id.slice(0, 8).toUpperCase() : 
       `RES${Date.now().toString().slice(-8)}`;
     
-    // Compact QR code on the right
+    // QR code placement
     try {
       const qrCodeDataUrl = await generateQRCode(`DINE24-${reservationId}`);
-      doc.addImage(qrCodeDataUrl, 'PNG', 150, 10, 30, 30);
+      doc.addImage(qrCodeDataUrl, 'PNG', 150, 50, 35, 35);
       
       doc.setFontSize(8);
       doc.setTextColor(0, 0, 0);
-      doc.text(`ID: ${reservationId}`, 165, 45, { align: 'center' });
+      doc.setFont("times", "bold");
+      doc.text(`ID: ${reservationId}`, 167.5, 90, { align: 'center' });
     } catch (error) {
       console.log('QR code generation failed');
     }
 
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Premium Dining Experience', 20, 35);
+    // Title with decorative line
+    doc.setFontSize(18);
+    doc.setTextColor(184, 134, 11);
+    doc.setFont("times", "bold");
+    doc.text('RESERVATION CONFIRMATION', 105, 55, { align: 'center' });
 
-    // Title
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "bold");
-    doc.text('RESERVATION CONFIRMATION', 20, 50);
-
-    // Line separator
+    // Decorative golden line
+    doc.setLineWidth(2);
+    doc.setDrawColor(184, 134, 11);
+    doc.line(20, 60, 190, 60);
     doc.setLineWidth(0.5);
-    doc.setDrawColor(212, 175, 55);
-    doc.line(20, 55, 190, 55);
+    doc.line(20, 62, 190, 62);
 
-    let yPos = 65;
+    let yPos = 75;
 
-    // Customer & Reservation Details in two columns
-    doc.setFontSize(12);
-    doc.setTextColor(212, 175, 55);
-    doc.setFont("helvetica", "bold");
-    doc.text('CUSTOMER DETAILS', 20, yPos);
-    doc.text('RESERVATION DETAILS', 110, yPos);
+    // Customer Details Table
+    doc.setFontSize(14);
+    doc.setTextColor(184, 134, 11);
+    doc.setFont("times", "bold");
+    doc.text('CUSTOMER INFORMATION', 20, yPos);
     
-    yPos += 8;
-    doc.setFontSize(9);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "normal");
+    yPos += 10;
     
-    // Left column - Customer details
-    const customerLines = [
-      `Name: ${reservationData.full_name || 'N/A'}`,
-      `Email: ${reservationData.email || 'N/A'}`,
-      `Phone: ${reservationData.phone || 'N/A'}`,
-      `Purpose: ${reservationData.purpose || 'N/A'}`
+    // Create elegant table for customer details
+    const customerTable = [
+      ['Name:', reservationData.full_name || 'N/A'],
+      ['Email:', reservationData.email || 'N/A'],
+      ['Phone:', reservationData.phone || 'N/A'],
+      ['Purpose:', reservationData.purpose || 'N/A']
     ];
 
-    // Right column - Reservation details
+    // Table background
+    doc.setFillColor(252, 240, 181);
+    doc.rect(20, yPos, 85, 30, 'F');
+    
+    doc.setDrawColor(184, 134, 11);
+    doc.setLineWidth(0.5);
+    doc.rect(20, yPos, 85, 30);
+
+    // Customer table content
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("times", "normal");
+    
+    customerTable.forEach((row, index) => {
+      const rowY = yPos + 5 + (index * 6);
+      doc.setFont("times", "bold");
+      doc.text(row[0], 25, rowY);
+      doc.setFont("times", "normal");
+      doc.text(row[1], 50, rowY);
+      
+      if (index < customerTable.length - 1) {
+        doc.setDrawColor(200, 200, 200);
+        doc.line(22, rowY + 2, 103, rowY + 2);
+      }
+    });
+
+    // Reservation Details Table
+    doc.setFontSize(14);
+    doc.setTextColor(184, 134, 11);
+    doc.setFont("times", "bold");
+    doc.text('RESERVATION DETAILS', 110, 75);
+
     const arrivalDate = reservationData.arrival_date ? 
       new Date(reservationData.arrival_date).toLocaleDateString('en-IN') : 'N/A';
-    const reservationLines = [
-      `Date: ${arrivalDate}`,
-      `Time: ${reservationData.arrival_time || 'N/A'}`,
-      `Table: ${reservationData.table_number || 'N/A'}`,
-      `Guests: ${reservationData.num_people || 'N/A'}`
+    
+    const reservationTable = [
+      ['Date:', arrivalDate],
+      ['Time:', reservationData.arrival_time || 'N/A'],
+      ['Table:', reservationData.table_number || 'N/A'],
+      ['Guests:', reservationData.num_people || 'N/A']
     ];
 
-    // Print both columns
-    for (let i = 0; i < Math.max(customerLines.length, reservationLines.length); i++) {
-      if (customerLines[i]) {
-        doc.text(customerLines[i], 20, yPos);
+    // Table background
+    doc.setFillColor(252, 240, 181);
+    doc.rect(110, 85, 75, 30, 'F');
+    
+    doc.setDrawColor(184, 134, 11);
+    doc.setLineWidth(0.5);
+    doc.rect(110, 85, 75, 30);
+
+    // Reservation table content
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("times", "normal");
+    
+    reservationTable.forEach((row, index) => {
+      const rowY = 90 + (index * 6);
+      doc.setFont("times", "bold");
+      doc.text(row[0], 115, rowY);
+      doc.setFont("times", "normal");
+      doc.text(row[1], 140, rowY);
+      
+      if (index < reservationTable.length - 1) {
+        doc.setDrawColor(200, 200, 200);
+        doc.line(112, rowY + 2, 183, rowY + 2);
       }
-      if (reservationLines[i]) {
-        doc.text(reservationLines[i], 110, yPos);
-      }
-      yPos += 6;
-    }
+    });
+
+    yPos = 125;
 
     // Order Details (if exists)
     if (orderItems && orderItems.length > 0) {
-      yPos += 8;
-      doc.setFontSize(12);
-      doc.setTextColor(212, 175, 55);
-      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(184, 134, 11);
+      doc.setFont("times", "bold");
       doc.text('ORDER SUMMARY', 20, yPos);
       
-      yPos += 8;
-      // Compact table headers
-      doc.setFontSize(8);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont("helvetica", "bold");
-      doc.text('Item', 20, yPos);
-      doc.text('Qty', 110, yPos);
-      doc.text('Price', 135, yPos);
-      doc.text('Total', 165, yPos);
+      yPos += 10;
       
-      yPos += 3;
-      doc.line(20, yPos, 190, yPos);
-      yPos += 5;
+      // Order table header
+      doc.setFillColor(184, 134, 11);
+      doc.rect(20, yPos, 170, 8, 'F');
+      
+      doc.setFontSize(10);
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("times", "bold");
+      doc.text('Item Name', 25, yPos + 5);
+      doc.text('Qty', 120, yPos + 5);
+      doc.text('Price (₹)', 140, yPos + 5);
+      doc.text('Total (₹)', 165, yPos + 5);
+      
+      yPos += 8;
 
       let subtotal = 0;
-      doc.setFont("helvetica", "normal");
-      orderItems.forEach((item: any) => {
+      doc.setTextColor(0, 0, 0);
+      doc.setFont("times", "normal");
+      
+      orderItems.forEach((item: any, index: number) => {
         const price = item.offer_price || item.price || 0;
         const quantity = item.selectedQuantity || 1;
         const itemTotal = price * quantity;
         subtotal += itemTotal;
         
-        const itemName = item.name ? item.name.substring(0, 25) : 'Unknown Item';
-        doc.text(itemName, 20, yPos);
-        doc.text(quantity.toString(), 110, yPos);
-        doc.text(`₹${price}`, 135, yPos);
-        doc.text(`₹${itemTotal}`, 165, yPos);
-        yPos += 5;
+        // Alternate row colors
+        if (index % 2 === 0) {
+          doc.setFillColor(252, 240, 181);
+          doc.rect(20, yPos, 170, 6, 'F');
+        }
+        
+        const itemName = item.name ? item.name.substring(0, 30) : 'Unknown Item';
+        doc.text(itemName, 25, yPos + 4);
+        doc.text(quantity.toString(), 125, yPos + 4);
+        doc.text(`₹${price}`, 145, yPos + 4);
+        doc.text(`₹${itemTotal}`, 170, yPos + 4);
+        yPos += 6;
       });
 
-      // Bill totals
+      // Bill totals with elegant formatting
       const gst = Math.round(subtotal * 0.18);
       const total = subtotal + gst;
 
-      yPos += 3;
-      doc.line(135, yPos, 190, yPos);
+      yPos += 5;
+      doc.setDrawColor(184, 134, 11);
+      doc.setLineWidth(1);
+      doc.line(140, yPos, 190, yPos);
+      yPos += 8;
+      
+      doc.setFont("times", "normal");
+      doc.text('Subtotal:', 145, yPos);
+      doc.text(`₹${subtotal}`, 175, yPos);
       yPos += 6;
+      doc.text('GST (18%):', 145, yPos);
+      doc.text(`₹${gst}`, 175, yPos);
+      yPos += 8;
       
-      doc.text('Subtotal:', 135, yPos);
-      doc.text(`₹${subtotal}`, 165, yPos);
-      yPos += 5;
-      doc.text('GST (18%):', 135, yPos);
-      doc.text(`₹${gst}`, 165, yPos);
-      yPos += 5;
+      doc.setFontSize(12);
+      doc.setTextColor(184, 134, 11);
+      doc.setFont("times", "bold");
+      doc.text('GRAND TOTAL:', 145, yPos);
+      doc.text(`₹${total}`, 175, yPos);
       
-      doc.setFontSize(10);
-      doc.setTextColor(212, 175, 55);
-      doc.setFont("helvetica", "bold");
-      doc.text('TOTAL:', 135, yPos);
-      doc.text(`₹${total}`, 165, yPos);
+      // Total box
+      doc.setDrawColor(184, 134, 11);
+      doc.setLineWidth(2);
+      doc.rect(140, yPos - 5, 50, 8);
     }
 
-    // Compact disclaimer
-    yPos += 15;
-    doc.setFontSize(8);
-    doc.setTextColor(255, 0, 0);
-    doc.setFont("helvetica", "bold");
-    doc.text('⚠️ DINING POLICY: 1-hour dining limit. Extended time incurs 15% extra charge.', 20, yPos);
+    // Important notice
+    yPos += 20;
+    doc.setFillColor(255, 248, 220); // Light yellow
+    doc.rect(20, yPos, 170, 15, 'F');
+    doc.setDrawColor(255, 193, 7); // Warning yellow
+    doc.rect(20, yPos, 170, 15);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(184, 134, 11);
+    doc.setFont("times", "bold");
+    doc.text('⚠️ IMPORTANT DINING POLICY', 25, yPos + 5);
+    doc.setFont("times", "normal");
+    doc.setTextColor(0, 0, 0);
+    doc.text('Dining duration: 1 hour from service start. Extended time: +15% charge.', 25, yPos + 10);
 
     // Footer
-    yPos += 15;
-    doc.setFontSize(10);
-    doc.setTextColor(212, 175, 55);
-    doc.setFont("helvetica", "bold");
-    doc.text('Thank you for choosing DINE24!', 105, yPos, { align: 'center' });
+    yPos += 25;
+    doc.setFillColor(184, 134, 11);
+    doc.rect(0, yPos, 210, 20, 'F');
     
-    yPos += 8;
-    doc.setFontSize(8);
-    doc.setTextColor(100, 100, 100);
-    doc.setFont("helvetica", "normal");
-    doc.text('Contact: +91 98765 43210 | Email: info@dine24.com', 105, yPos, { align: 'center' });
+    doc.setFontSize(14);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("times", "bold");
+    doc.text('Thank you for choosing DINE24!', 105, yPos + 8, { align: 'center' });
+    
+    doc.setFontSize(9);
+    doc.setFont("times", "normal");
+    doc.text('Contact: +91 98765 43210 | Email: info@dine24.com | www.dine24.com', 105, yPos + 15, { align: 'center' });
 
-    console.log('Compact PDF generated successfully');
+    console.log('Elegant PDF with Times New Roman generated successfully');
     return doc.output('datauristring');
     
   } catch (error) {

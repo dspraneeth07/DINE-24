@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Clock, Utensils, Users, Award, ChefHat } from "lucide-react";
+import { Star, Clock, Utensils, Users, Award, ChefHat, Crown, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,26 +43,49 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Reverted to older simple version */}
-      <section className="relative bg-gradient-to-b from-background to-muted py-20 px-4">
-        <div className="container mx-auto text-center">
-          <h1 className="font-playfair text-6xl md:text-7xl font-bold text-royal-gold mb-6">
-            DINE24
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Experience Royal Dining Excellence Around the Clock
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/reserve-table">
-              <Button size="lg" className="btn-royal">
-                Reserve Your Table
-              </Button>
-            </Link>
-            <Link to="/menu">
-              <Button size="lg" variant="outline">
-                Explore Menu
-              </Button>
-            </Link>
+      {/* Enhanced Hero Section with Golden Designs */}
+      <section className="relative bg-gradient-to-b from-background via-royal-gold/5 to-muted py-20 px-4 overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-10 left-10 text-royal-gold/20 animate-pulse">
+          <Crown className="h-16 w-16" />
+        </div>
+        <div className="absolute top-20 right-16 text-royal-gold/20 animate-pulse">
+          <Sparkles className="h-12 w-12" />
+        </div>
+        <div className="absolute bottom-20 left-20 text-royal-gold/20 animate-pulse">
+          <ChefHat className="h-14 w-14" />
+        </div>
+        <div className="absolute bottom-16 right-12 text-royal-gold/20 animate-pulse">
+          <Utensils className="h-10 w-10" />
+        </div>
+        
+        {/* Golden Border Design */}
+        <div className="absolute inset-0 border-4 border-royal-gold/10 m-8 rounded-xl"></div>
+        <div className="absolute inset-0 border-2 border-royal-gold/20 m-12 rounded-lg"></div>
+        
+        <div className="container mx-auto text-center relative z-10">
+          <div className="bg-gradient-to-r from-transparent via-royal-gold/10 to-transparent p-1 rounded-2xl mb-8">
+            <div className="bg-background/80 backdrop-blur-sm rounded-xl p-8 border border-royal-gold/30">
+              <h1 className="font-playfair text-6xl md:text-7xl font-bold bg-gradient-to-r from-royal-gold via-yellow-500 to-royal-gold bg-clip-text text-transparent mb-6 drop-shadow-2xl">
+                DINE24
+              </h1>
+              <div className="w-32 h-1 bg-gradient-to-r from-transparent via-royal-gold to-transparent mx-auto mb-6"></div>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto font-medium">
+                Experience Royal Dining Excellence Around the Clock
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/reserve-table">
+                  <Button size="lg" className="btn-royal shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all">
+                    Reserve Your Table
+                  </Button>
+                </Link>
+                <Link to="/menu">
+                  <Button size="lg" variant="outline" className="border-royal-gold/50 text-royal-gold hover:bg-royal-gold/10 shadow-lg">
+                    Explore Menu
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
