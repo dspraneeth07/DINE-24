@@ -50,7 +50,7 @@ const AdminMenu = () => {
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
-        .order('category, name');
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching menu items:', error);
@@ -64,14 +64,24 @@ const AdminMenu = () => {
     mutationFn: async (newItem: Omit<MenuItem, 'id' | 'created_at' | 'updated_at' | 'orders_placed'>) => {
       console.log('Adding menu item:', newItem);
       
+      // Check if item with same name already exists
+      const { data: existingItems } = await supabase
+        .from('menu_items')
+        .select('name')
+        .eq('name', newItem.name.trim());
+
+      if (existingItems && existingItems.length > 0) {
+        throw new Error('A menu item with this name already exists');
+      }
+      
       const { data, error } = await supabase
         .from('menu_items')
         .insert([{
-          name: newItem.name,
+          name: newItem.name.trim(),
           category: newItem.category,
           price: newItem.price,
           offer_price: newItem.offer_price || null,
-          quantity: newItem.quantity,
+          quantity: newItem.quantity.trim(),
           rating: newItem.rating || 0,
           is_veg: newItem.is_veg,
           orders_placed: 0
@@ -98,7 +108,7 @@ const AdminMenu = () => {
       console.error('Error adding menu item:', error);
       toast({
         title: "Error",
-        description: `Failed to add menu item: ${error.message}`,
+        description: error.message || "Failed to add menu item",
         variant: "destructive",
       });
     }
@@ -274,7 +284,9 @@ const AdminMenu = () => {
     }
   };
 
-  const categories = [...new Set(menuItems?.map(item => item.category) || [])];
+  // Unique categories from existing items
+  const existingCategories = [...new Set(menuItems?.map(item => item.category) || [])];
+  const allCategories = [...new Set([...existingCategories, 'Appetizers', 'Main Course', 'Desserts', 'Beverages', 'Breakfast', 'Snacks', 'Pizza', 'Specials', 'Drinks'])];
 
   if (isLoading) {
     return <div className="text-center py-8">Loading menu items...</div>;
@@ -325,18 +337,9 @@ const AdminMenu = () => {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    {allCategories.map(cat => (
+                      <SelectItem key={`category-${cat}`} value={cat}>{cat}</SelectItem>
                     ))}
-                    <SelectItem value="Appetizers">Appetizers</SelectItem>
-                    <SelectItem value="Main Course">Main Course</SelectItem>
-                    <SelectItem value="Desserts">Desserts</SelectItem>
-                    <SelectItem value="Beverages">Beverages</SelectItem>
-                    <SelectItem value="Breakfast">Breakfast</SelectItem>
-                    <SelectItem value="Snacks">Snacks</SelectItem>
-                    <SelectItem value="Pizza">Pizza</SelectItem>
-                    <SelectItem value="Specials">Specials</SelectItem>
-                    <SelectItem value="Drinks">Drinks</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

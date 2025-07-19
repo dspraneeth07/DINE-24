@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 import { useState } from "react";
@@ -20,7 +20,7 @@ const Header = () => {
     <header className="bg-background border-b border-royal-gold/20 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Updated without crown icon */}
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <span className="font-playfair text-3xl font-bold text-royal-gold tracking-wider">
               DINE24
@@ -67,17 +67,27 @@ const Header = () => {
               Reserve Table
             </Button>
 
-            {/* Admin Login/Dashboard */}
+            {/* Admin Login/Dashboard - Icon Only */}
             {!isAdminLoggedIn ? (
               <Link to="/login">
-                <Button className="btn-royal hidden md:inline-flex">
-                  Admin Login
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="hover:bg-royal-gold/10 hidden md:inline-flex"
+                  title="Admin Login"
+                >
+                  <User className="h-5 w-5" />
                 </Button>
               </Link>
             ) : (
               <Link to="/admin/dashboard">
-                <Button variant="outline" className="royal-border hidden md:inline-flex">
-                  Admin Dashboard
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="hover:bg-royal-gold/10 hidden md:inline-flex"
+                  title="Admin Dashboard"
+                >
+                  <Settings className="h-5 w-5" />
                 </Button>
               </Link>
             )}
@@ -141,13 +151,15 @@ const Header = () => {
               </Button>
               {!isAdminLoggedIn ? (
                 <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="btn-royal w-full">
+                  <Button variant="outline" className="w-full">
+                    <User className="h-4 w-4 mr-2" />
                     Admin Login
                   </Button>
                 </Link>
               ) : (
                 <Link to="/admin/dashboard" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="royal-border w-full">
+                  <Button variant="outline" className="w-full">
+                    <Settings className="h-4 w-4 mr-2" />
                     Admin Dashboard
                   </Button>
                 </Link>
