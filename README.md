@@ -34,7 +34,7 @@
 │   EXTERNAL      │    │   AI SERVICES   │    │   SUPABASE      │
 │   SERVICES      │    │                 │    │   INTEGRATION   │
 │                 │    │ • Gemini API    │    │                 │
-│ • Payment Gateway│    │ • Menu Context  │    │ • Edge Functions│
+│                 │    │ • Menu Context  │    │ • Edge Functions│
 │ • Cloud Storage │    │ • Chat Support  │    │ • Real-time DB  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
