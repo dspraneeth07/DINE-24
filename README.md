@@ -46,13 +46,13 @@
 │                    CHATBOT-DATABASE SYNC WORKFLOW                   │
 └─────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│    USER QUERY   │    │   FLASK BACKEND │    │    MONGODB      │
-│                 │    │                 │    │   DATABASE      │
-│ "Show me menu"  │───▶│ 1. Route Handler│───▶│ • menu_items    │
-│ "Book a table"  │    │ 2. Query Parser │    │ • reservations  │
-│ "What's special"│    │ 3. DB Connector │    │ • users         │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│    USER QUERY   │     │   FLASK BACKEND │     │    MONGODB      │
+│                 │     │                 │     │   DATABASE      │
+│ "Show me menu"  │───▶ │ 1. Route Handler│───▶│ • menu_items    │
+│ "Book a table"  │     │ 2. Query Parser │     │ • reservations  │
+│ "What's special"│     │ 3. DB Connector │     │ • users         │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -79,24 +79,24 @@
 │  vegetarian     │    │                                     │    │                 │
 │  dishes"        │    │ 1. Context Preparation:             │    │ "Here are our   │
 │                 │    │    - Menu data from MongoDB         │    │  delicious veg  │
-│ "Book table     │    │    - User session info             │    │  options..."     │
-│  for 4 people"  │    │    - Restaurant info               │    │                 │
+│ "Book table     │    │    - User session info              │    │  options..."     │
+│  for 4 people"  │    │    - Restaurant info                │    │                 │
 │                 │    │                                     │    │ + NAVIGATION:   │
-│ "What are       │    │ 2. Intent Recognition:             │    │   /menu         │
-│  today's        │    │    - Menu inquiry → /menu          │    │   /reserve      │
-│  specials?"     │    │    - Reservation → /reserve-table  │    │   /special      │
-│                 │    │    - Specials → /todays-special    │    │                 │
+│ "What are       │    │ 2. Intent Recognition:              │    │   /menu         │
+│  today's        │    │    - Menu inquiry → /menu           │    │   /reserve      │
+│  specials?"     │    │    - Reservation → /reserve-table   │    │   /special      │
+│                 │    │    - Specials → /todays-special     │    │                 │
 └─────────────────┘    │                                     │    └─────────────────┘
-         │              │ 3. Response Generation:            │             │
-         │              │    - Natural language response    │             │
-         ▼              │    - Navigation triggers          │             ▼
-┌─────────────────┐    │    - Contextual information       │    ┌─────────────────┐
+         │             │ 3. Response Generation:             │             │
+         │             │    - Natural language response      │             │
+         ▼             │    - Navigation triggers            │             ▼
+┌─────────────────┐    │    - Contextual information         │    ┌─────────────────┐
 │   SESSION       │    │                                     │    │   PAGE          │
-│   CONTEXT       │    │ 4. Database Integration:           │    │   REDIRECTION   │
-│                 │    │    - Real-time menu prices        │    │                 │
-│ • User History  │    │    - Availability status          │    │ • Automatic     │
-│ • Preferences   │    │    - Special offers               │    │   routing       │
-│ • Location      │    │    - Restaurant capacity          │    │ • Smooth        │
+│   CONTEXT       │    │ 4. Database Integration:            │    │   REDIRECTION   │
+│                 │    │    - Real-time menu prices          │    │                 │
+│ • User History  │    │    - Availability status            │    │ • Automatic     │
+│ • Preferences   │    │    - Special offers                 │    │   routing       │
+│ • Location      │    │    - Restaurant capacity            │    │ • Smooth        │
 │ • Time          │    │                                     │    │   transition    │
 └─────────────────┘    └─────────────────────────────────────┘    └─────────────────┘
          │                                │                                │
